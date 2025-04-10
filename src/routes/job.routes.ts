@@ -134,96 +134,7 @@ jobRoutes.get('/', async (c) => {
   const type = c.req.query('type');
   const status = c.req.query('status');
 
-  // In development, return mock data
-  if (process.env.NODE_ENV === 'development') {
-    // Generate some mock jobs for demonstration
-    const mockJobs = [
-      {
-        id: 'mock-email-welcome-1744266015169-123',
-        queue: 'email',
-        name: 'welcome-email',
-        data: {
-          to: 'demo@example.com',
-          subject: 'Welcome to our service!',
-          body: 'Hello Demo User, welcome to our service!'
-        },
-        status: 'completed',
-        priority: 1,
-        attempts: 1,
-        maxAttempts: 3,
-        timestamp: new Date(Date.now() - 60000).toISOString(),
-        processedOn: new Date(Date.now() - 59000).toISOString(),
-        finishedOn: new Date(Date.now() - 58000).toISOString(),
-        failedReason: null
-      },
-      {
-        id: 'mock-email-reset-1744266020012-456',
-        queue: 'email',
-        name: 'password-reset',
-        data: {
-          to: 'demo@example.com',
-          subject: 'Password Reset Request',
-          body: 'Use this token to reset your password: a1b2c3...'
-        },
-        status: 'active',
-        priority: 1,
-        attempts: 1,
-        maxAttempts: 5,
-        timestamp: new Date(Date.now() - 30000).toISOString(),
-        processedOn: new Date(Date.now() - 29000).toISOString(),
-        finishedOn: null,
-        failedReason: null
-      },
-      {
-        id: 'mock-processing-job-1744266020012-789',
-        queue: 'processing',
-        name: 'process-data',
-        data: {
-          type: 'image',
-          url: 'https://example.com/image.jpg'
-        },
-        status: 'waiting',
-        priority: 2,
-        attempts: 0,
-        maxAttempts: 2,
-        timestamp: new Date(Date.now() - 10000).toISOString(),
-        processedOn: null,
-        finishedOn: null,
-        failedReason: null
-      }
-    ];
-    
-    // Filter jobs based on request parameters
-    let filteredJobs = [...mockJobs];
-    
-    if (type) {
-      filteredJobs = filteredJobs.filter(job => job.queue === type);
-    }
-    
-    if (status) {
-      filteredJobs = filteredJobs.filter(job => job.status === status);
-    }
-    
-    // Apply pagination
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
-    const paginatedJobs = filteredJobs.slice(startIndex, endIndex);
-    
-    return c.json({
-      success: true,
-      data: {
-        jobs: paginatedJobs,
-        pagination: {
-          page,
-          limit,
-          totalJobs: filteredJobs.length,
-          hasMore: endIndex < filteredJobs.length
-        }
-      }
-    });
-  }
-
-  // In production, use the real implementation
+  // Use the real implementation to fetch jobs from Redis
   const jobs = await jobService.listJobs({ page, limit, type, status });
 
   return c.json({
@@ -237,59 +148,7 @@ jobRoutes.get('/', async (c) => {
 jobRoutes.get('/:id', async (c) => {
   const { id } = c.req.param();
   
-  // In development, return mock data
-  if (process.env.NODE_ENV === 'development') {
-    // Check if the id looks like one of our mock ids
-    if (id.startsWith('mock-')) {
-      // Parse job type from ID
-      let queueType = 'unknown';
-      let jobName = 'unknown';
-      
-      if (id.includes('email-welcome')) {
-        queueType = 'email';
-        jobName = 'welcome-email';
-      } else if (id.includes('email-reset')) {
-        queueType = 'email';
-        jobName = 'password-reset';
-      } else if (id.includes('processing')) {
-        queueType = 'processing';
-        jobName = 'process-data';
-      } else if (id.includes('notification')) {
-        queueType = 'notification';
-        jobName = 'send-notification';
-      }
-      
-      // Return mock job data
-      return c.json({
-        success: true,
-        data: {
-          id,
-          queue: queueType,
-          name: jobName,
-          data: {
-            to: queueType === 'email' ? 'test@example.com' : undefined,
-            userId: queueType === 'notification' ? 'user123' : undefined,
-            message: queueType === 'notification' ? 'You have a new notification' : undefined,
-            subject: queueType === 'email' ? 'Job Details' : undefined,
-            body: queueType === 'email' ? 'This is a mock email body' : undefined
-          },
-          status: 'completed',
-          priority: 1,
-          attempts: 1,
-          maxAttempts: 3,
-          timestamp: new Date(Date.now() - 60000).toISOString(),
-          processedOn: new Date(Date.now() - 59000).toISOString(),
-          finishedOn: new Date(Date.now() - 58000).toISOString(),
-          failedReason: null
-        }
-      });
-    }
-    
-    // If not a recognized mock ID, return a 404
-    throw new ApiError('Job not found', 404);
-  }
-  
-  // In production, use the real implementation
+  // Use the real implementation to fetch job details from Redis
   const job = await jobService.getJobById(id);
   if (!job) {
     throw new ApiError('Job not found', 404);
