@@ -54,6 +54,11 @@ bun run src/index.ts
 - `GET /api/v1/jobs/:id` - Get job details
 - `GET /api/v1/jobs/:id/logs` - Get job logs
 - `DELETE /api/v1/jobs/:id` - Cancel a job
+- `GET /api/v1/jobs/stats` - Get queue statistics and metrics
+
+### Dashboard
+
+- `GET /dashboard` - Visual dashboard for monitoring queues
 
 ### Email Queue
 

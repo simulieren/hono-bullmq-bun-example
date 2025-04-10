@@ -66,6 +66,17 @@ dashboardRoutes.get('/', (c) => {
     <h1>Queue Management Dashboard</h1>
     <p>This dashboard provides access to monitor and manage the job queues in the application.</p>
     
+    <h2>Queue Statistics</h2>
+    <div class="queue-section" style="background-color: #e6f7ff; border-left: 4px solid #1890ff;">
+      <h3>Queue Overview</h3>
+      <div class="endpoint">
+        <a href="/api/v1/jobs/stats" target="_blank" style="font-weight: bold;">View All Queue Statistics</a>
+      </div>
+      <p style="margin-top: 10px; font-size: 14px;">
+        Get overall statistics for all queues, including job counts, worker status, and health metrics.
+      </p>
+    </div>
+    
     <h2>Available Queues</h2>
     <div class="queue-section">
       <h3>Email Queue</h3>
@@ -126,6 +137,7 @@ dashboardRoutes.get('/', (c) => {
     
     <h2>API Documentation</h2>
     <ul>
+      <li><code>GET /api/v1/jobs/stats</code> - Get queue statistics</li>
       <li><code>GET /api/v1/jobs</code> - List all jobs (with pagination)</li>
       <li><code>GET /api/v1/jobs?type=TYPE&status=STATUS</code> - Filter jobs by type and status</li>
       <li><code>GET /api/v1/jobs/:id</code> - Get job details</li>
