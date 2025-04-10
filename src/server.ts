@@ -1,6 +1,5 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { compress } from 'hono/compress';
 import { secureHeaders } from 'hono/secure-headers';
 import { logger } from './middleware/logger';
 import { errorHandler } from './middleware/error-handler';
@@ -16,7 +15,6 @@ export function createApp(): Hono {
 
   // Apply global middleware
   app.use('*', cors());
-  app.use('*', compress());
   app.use('*', secureHeaders());
   app.use('*', async (c, next) => {
     const start = Date.now();

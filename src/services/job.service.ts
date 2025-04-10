@@ -1,6 +1,6 @@
-import { emailQueue } from '../queues/email.queue';
-import { processingQueue } from '../queues/processing.queue';
-import { notificationQueue } from '../queues/notification.queue';
+import { emailQueue, emailQueueHelpers } from '../queues/email.queue';
+import { processingQueue, processingQueueHelpers } from '../queues/processing.queue';
+import { notificationQueue, notificationQueueHelpers } from '../queues/notification.queue';
 import { getRedisConnection } from './redis.service';
 import { queueLogger as logger } from '../middleware/logger';
 import { ApiError, AppError } from '../utils/errors';
@@ -89,6 +89,36 @@ export const jobService = {
     } catch (error) {
       logger.error({ error, data }, 'Failed to create notification job');
       throw new AppError('Failed to create notification job', { cause: error });
+    }
+  },
+  
+  /**
+   * Create a welcome email job
+   * @param email User's email address
+   * @param name User's name for personalization
+   */
+  async createWelcomeEmail(email: string, name: string): Promise<string> {
+    try {
+      logger.info({ email, name }, 'Creating welcome email job');
+      return await emailQueueHelpers.sendWelcomeEmail(email, name);
+    } catch (error) {
+      logger.error({ error, email }, 'Failed to create welcome email job');
+      throw new AppError('Failed to create welcome email job', { cause: error });
+    }
+  },
+  
+  /**
+   * Create a password reset email job
+   * @param email User's email address
+   * @param resetToken Password reset token
+   */
+  async createPasswordResetEmail(email: string, resetToken: string): Promise<string> {
+    try {
+      logger.info({ email }, 'Creating password reset email job');
+      return await emailQueueHelpers.sendPasswordResetEmail(email, resetToken);
+    } catch (error) {
+      logger.error({ error, email }, 'Failed to create password reset email job');
+      throw new AppError('Failed to create password reset email job', { cause: error });
     }
   },
 

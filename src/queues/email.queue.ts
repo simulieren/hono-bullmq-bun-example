@@ -88,19 +88,39 @@ export const emailQueueHelpers = {
    * @param name User's name for personalization
    */
   async sendWelcomeEmail(email: string, name: string): Promise<string> {
-    const job = await emailQueue.add(
-      'welcome-email',
-      {
-        to: email,
-        subject: 'Welcome to our service!',
-        body: `Hello ${name}, welcome to our service!`
-      },
-      {
-        priority: 1, // High priority
+    try {
+      // For development/demo, simply generate a job ID
+      if (process.env.NODE_ENV === 'development') {
+        const mockJobId = `mock-email-welcome-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+        
+        // Log the mock job for visibility in development
+        logger.info({
+          jobId: mockJobId,
+          to: email,
+          name: name,
+          jobType: 'welcome-email'
+        }, 'Created mock welcome email job');
+        
+        return mockJobId;
       }
-    );
-    
-    return job.id;
+
+      const job = await emailQueue.add(
+        'welcome-email',
+        {
+          to: email,
+          subject: 'Welcome to our service!',
+          body: `Hello ${name}, welcome to our service!`
+        },
+        {
+          priority: 1, // High priority
+        }
+      );
+      
+      return job.id;
+    } catch (error) {
+      logger.error({ error, email }, 'Error creating welcome email');
+      throw error;
+    }
   },
   
   /**
@@ -109,20 +129,40 @@ export const emailQueueHelpers = {
    * @param resetToken Password reset token
    */
   async sendPasswordResetEmail(email: string, resetToken: string): Promise<string> {
-    const job = await emailQueue.add(
-      'password-reset',
-      {
-        to: email,
-        subject: 'Password Reset Request',
-        body: `Use this token to reset your password: ${resetToken}`
-      },
-      {
-        priority: 1, // High priority
-        attempts: 5, // More attempts for critical emails
+    try {
+      // For development/demo, simply generate a job ID
+      if (process.env.NODE_ENV === 'development') {
+        const mockJobId = `mock-email-reset-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+        
+        // Log the mock job for visibility in development
+        logger.info({
+          jobId: mockJobId,
+          to: email,
+          resetToken: resetToken.substring(0, 3) + '...',
+          jobType: 'password-reset'
+        }, 'Created mock password reset email job');
+        
+        return mockJobId;
       }
-    );
-    
-    return job.id;
+
+      const job = await emailQueue.add(
+        'password-reset',
+        {
+          to: email,
+          subject: 'Password Reset Request',
+          body: `Use this token to reset your password: ${resetToken}`
+        },
+        {
+          priority: 1, // High priority
+          attempts: 5, // More attempts for critical emails
+        }
+      );
+      
+      return job.id;
+    } catch (error) {
+      logger.error({ error, email }, 'Error creating password reset email');
+      throw error;
+    }
   },
   
   /**
@@ -132,18 +172,38 @@ export const emailQueueHelpers = {
    * @param message Email message
    */
   async sendNotificationEmail(email: string, subject: string, message: string): Promise<string> {
-    const job = await emailQueue.add(
-      'notification-email',
-      {
-        to: email,
-        subject,
-        body: message
-      },
-      {
-        priority: 2, // Medium priority
+    try {
+      // For development/demo, simply generate a job ID
+      if (process.env.NODE_ENV === 'development') {
+        const mockJobId = `mock-email-notification-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+        
+        // Log the mock job for visibility in development
+        logger.info({
+          jobId: mockJobId,
+          to: email,
+          subject: subject,
+          jobType: 'notification-email'
+        }, 'Created mock notification email job');
+        
+        return mockJobId;
       }
-    );
-    
-    return job.id;
+
+      const job = await emailQueue.add(
+        'notification-email',
+        {
+          to: email,
+          subject,
+          body: message
+        },
+        {
+          priority: 2, // Medium priority
+        }
+      );
+      
+      return job.id;
+    } catch (error) {
+      logger.error({ error, email }, 'Error creating notification email');
+      throw error;
+    }
   }
 };

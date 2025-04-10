@@ -78,6 +78,50 @@ jobRoutes.post('/email', zValidator('json', createEmailJobSchema), async (c) => 
   }, 201);
 });
 
+// Route: POST /jobs/email/welcome
+// Create a welcome email job
+jobRoutes.post('/email/welcome', zValidator('json', z.object({
+  email: z.string().email(),
+  name: z.string().min(1)
+})), async (c) => {
+  const { email, name } = c.req.valid('json');
+  
+  // Use email queue helper for welcome email
+  const jobId = await jobService.createWelcomeEmail(email, name);
+  
+  return c.json({
+    success: true,
+    data: {
+      jobId,
+      queue: 'email',
+      type: 'welcome',
+      status: 'created'
+    }
+  }, 201);
+});
+
+// Route: POST /jobs/email/password-reset
+// Create a password reset email job
+jobRoutes.post('/email/password-reset', zValidator('json', z.object({
+  email: z.string().email(),
+  resetToken: z.string().min(1)
+})), async (c) => {
+  const { email, resetToken } = c.req.valid('json');
+  
+  // Use email queue helper for password reset
+  const jobId = await jobService.createPasswordResetEmail(email, resetToken);
+  
+  return c.json({
+    success: true,
+    data: {
+      jobId,
+      queue: 'email',
+      type: 'password-reset',
+      status: 'created'
+    }
+  }, 201);
+});
+
 // Route: POST /jobs/processing
 // Create a new data processing job
 jobRoutes.post('/processing', zValidator('json', createProcessingJobSchema), async (c) => {
