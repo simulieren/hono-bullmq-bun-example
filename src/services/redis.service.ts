@@ -16,22 +16,13 @@ export function getRedisConnection(): Redis {
     return redisClient;
   }
   
-  // In development mode, use mock Redis implementation if Redis URL is localhost
-  const isLocalRedis = config.redis.url.includes('localhost') || config.redis.url.includes('127.0.0.1');
-  if (config.isDevelopment && isLocalRedis) {
-    logger.warn('Using mock Redis implementation for development. NOT FOR PRODUCTION USE.');
-    redisClient = new RedisMock({
-      // Configure mock with BullMQ compatibility settings
-      maxRetriesPerRequest: null
-    }) as Redis;
-    
-    logger.info('Mock Redis client ready');
-    return redisClient;
-  }
+  // We'll use the actual Redis instance for both development and production now
+  // No need for mock implementation as we have a real Redis server
 
   try {
     // Create new Redis client
     redisClient = new Redis(config.redis.url, {
+      username: config.redis.username,
       password: config.redis.password,
       retryStrategy(times) {
         // Exponential backoff with maximum retry time of 10s

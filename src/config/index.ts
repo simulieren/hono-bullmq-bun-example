@@ -12,6 +12,7 @@ const envSchema = z.object({
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
   REDIS_URL: z.string().default('redis://localhost:6379'),
   REDIS_PASSWORD: z.string().optional(),
+  REDIS_USERNAME: z.string().optional(),
   MAX_CONCURRENCY: z.string().transform(Number).default('5')
 });
 
@@ -35,7 +36,8 @@ export const config = {
   logLevel: result.data.LOG_LEVEL,
   redis: {
     url: result.data.REDIS_URL,
-    password: result.data.REDIS_PASSWORD
+    password: result.data.REDIS_PASSWORD,
+    username: result.data.REDIS_USERNAME
   },
   queue: {
     maxConcurrency: result.data.MAX_CONCURRENCY
