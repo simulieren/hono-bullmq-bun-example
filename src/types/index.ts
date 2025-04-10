@@ -111,12 +111,15 @@ export interface NotificationJobData {
  * Job statistics
  */
 export interface QueueStats {
+  name: string;
   waiting: number;
   active: number;
   completed: number;
   failed: number;
   delayed: number;
   paused: boolean;
+  workerCount?: number;
+  jobCount?: number;
 }
 
 /**

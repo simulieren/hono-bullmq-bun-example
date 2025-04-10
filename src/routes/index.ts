@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { jobRoutes } from './job.routes';
 import { healthRoutes } from './health.routes';
 import { dashboardRoutes } from './dashboard.routes';
+import { statsRoutes } from './stats.routes';
 
 /**
  * Registers all application routes
@@ -15,6 +16,7 @@ export function registerRoutes(app: Hono): void {
   // Register feature-specific routes
   api.route('/jobs', jobRoutes);
   api.route('/health', healthRoutes);
+  api.route('/stats', statsRoutes);
 
   // Register error routes
   api.notFound((c) => {
