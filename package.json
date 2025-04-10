@@ -1,0 +1,20 @@
+{
+  "name": "workspace",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.4.3",
+    "bullmq": "^5.48.0",
+    "hono": "^4.7.6",
+    "ioredis": "^5.6.0",
+    "ioredis-mock": "^8.9.0",
+    "pino": "^9.6.0",
+    "zod": "^3.24.2"
+  }
+}
