@@ -48,6 +48,21 @@ export const jobService = {
       
       logger.info({ priority }, 'Creating processing job');
       
+      // For development/demo environment, create a mock job
+      if (process.env.NODE_ENV === 'development') {
+        const mockJobId = `mock-processing-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+        
+        // Log the mock job for visibility in development
+        logger.info({
+          jobId: mockJobId,
+          priority,
+          data: JSON.stringify(data.data).substring(0, 50) + (JSON.stringify(data.data).length > 50 ? '...' : ''),
+          jobType: 'processing'
+        }, 'Created mock processing job');
+        
+        return { id: mockJobId };
+      }
+      
       const job = await processingQueue.add('process-data', data.data, {
         priority: priorityValue,
         attempts: 2,
@@ -73,6 +88,22 @@ export const jobService = {
   async createNotificationJob(data: { userId: string; message: string; channel: 'push' | 'sms' | 'in-app' }) {
     try {
       logger.info({ userId: data.userId, channel: data.channel }, 'Creating notification job');
+      
+      // For development/demo environment, create a mock job
+      if (process.env.NODE_ENV === 'development') {
+        const mockJobId = `mock-notification-general-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+        
+        // Log the mock job for visibility in development
+        logger.info({
+          jobId: mockJobId,
+          userId: data.userId,
+          message: data.message.substring(0, 20) + (data.message.length > 20 ? '...' : ''),
+          channel: data.channel,
+          jobType: 'notification-general'
+        }, 'Created mock notification job');
+        
+        return { id: mockJobId };
+      }
       
       const job = await notificationQueue.add('send-notification', data, {
         attempts: 5,

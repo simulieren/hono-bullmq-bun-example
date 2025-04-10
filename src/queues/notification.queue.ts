@@ -99,23 +99,45 @@ export const notificationQueueHelpers = {
     body: string,
     data?: Record<string, any>
   ): Promise<string> {
-    const job = await notificationQueue.add(
-      'push-notification',
-      {
-        userId,
-        message: body,
-        channel: 'push',
-        metadata: {
+    try {
+      // For development/demo, simply generate a job ID
+      if (process.env.NODE_ENV === 'development') {
+        const mockJobId = `mock-notification-push-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+        
+        // Log the mock job for visibility in development
+        logger.info({
+          jobId: mockJobId,
+          userId,
           title,
-          data
-        }
-      },
-      {
-        priority: 2, // Medium priority
+          body,
+          channel: 'push',
+          jobType: 'push-notification'
+        }, 'Created mock push notification job');
+        
+        return mockJobId;
       }
-    );
-    
-    return job.id;
+
+      const job = await notificationQueue.add(
+        'push-notification',
+        {
+          userId,
+          message: body,
+          channel: 'push',
+          metadata: {
+            title,
+            data
+          }
+        },
+        {
+          priority: 2, // Medium priority
+        }
+      );
+      
+      return job.id;
+    } catch (error) {
+      logger.error({ error, userId }, 'Error creating push notification');
+      throw error;
+    }
   },
   
   /**
@@ -129,22 +151,44 @@ export const notificationQueueHelpers = {
     phoneNumber: string,
     message: string
   ): Promise<string> {
-    const job = await notificationQueue.add(
-      'sms-notification',
-      {
-        userId,
-        message,
-        channel: 'sms',
-        metadata: {
-          phoneNumber
-        }
-      },
-      {
-        priority: 1, // Higher priority
+    try {
+      // For development/demo, simply generate a job ID
+      if (process.env.NODE_ENV === 'development') {
+        const mockJobId = `mock-notification-sms-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+        
+        // Log the mock job for visibility in development
+        logger.info({
+          jobId: mockJobId,
+          userId,
+          phoneNumber,
+          message: message.substring(0, 20) + (message.length > 20 ? '...' : ''),
+          channel: 'sms',
+          jobType: 'sms-notification'
+        }, 'Created mock SMS notification job');
+        
+        return mockJobId;
       }
-    );
-    
-    return job.id;
+
+      const job = await notificationQueue.add(
+        'sms-notification',
+        {
+          userId,
+          message,
+          channel: 'sms',
+          metadata: {
+            phoneNumber
+          }
+        },
+        {
+          priority: 1, // Higher priority
+        }
+      );
+      
+      return job.id;
+    } catch (error) {
+      logger.error({ error, userId }, 'Error creating SMS notification');
+      throw error;
+    }
   },
   
   /**
@@ -158,22 +202,44 @@ export const notificationQueueHelpers = {
     message: string,
     type: 'info' | 'warning' | 'error' | 'success'
   ): Promise<string> {
-    const job = await notificationQueue.add(
-      'in-app-notification',
-      {
-        userId,
-        message,
-        channel: 'in-app',
-        metadata: {
+    try {
+      // For development/demo, simply generate a job ID
+      if (process.env.NODE_ENV === 'development') {
+        const mockJobId = `mock-notification-inapp-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+        
+        // Log the mock job for visibility in development
+        logger.info({
+          jobId: mockJobId,
+          userId,
+          message: message.substring(0, 20) + (message.length > 20 ? '...' : ''),
           type,
-          timestamp: new Date().toISOString()
-        }
-      },
-      {
-        priority: 3, // Lower priority
+          channel: 'in-app',
+          jobType: 'in-app-notification'
+        }, 'Created mock in-app notification job');
+        
+        return mockJobId;
       }
-    );
-    
-    return job.id;
+
+      const job = await notificationQueue.add(
+        'in-app-notification',
+        {
+          userId,
+          message,
+          channel: 'in-app',
+          metadata: {
+            type,
+            timestamp: new Date().toISOString()
+          }
+        },
+        {
+          priority: 3, // Lower priority
+        }
+      );
+      
+      return job.id;
+    } catch (error) {
+      logger.error({ error, userId }, 'Error creating in-app notification');
+      throw error;
+    }
   }
 };
