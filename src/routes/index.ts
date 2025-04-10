@@ -30,7 +30,7 @@ export function registerRoutes(app: Hono): void {
   // Mount the API router to the main app
   app.route('/', api);
 
-  // Mount the Bull Board dashboard
+  // Mount the custom queue dashboard
   app.route('/dashboard', dashboardRoutes);
 
   // Root redirect to API health check
