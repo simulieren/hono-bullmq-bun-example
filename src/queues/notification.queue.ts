@@ -100,22 +100,11 @@ export const notificationQueueHelpers = {
     data?: Record<string, any>
   ): Promise<string> {
     try {
-      // For development/demo, simply generate a job ID
-      if (process.env.NODE_ENV === 'development') {
-        const mockJobId = `mock-notification-push-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-        
-        // Log the mock job for visibility in development
-        logger.info({
-          jobId: mockJobId,
-          userId,
-          title,
-          body,
-          channel: 'push',
-          jobType: 'push-notification'
-        }, 'Created mock push notification job');
-        
-        return mockJobId;
-      }
+      logger.info({
+        userId,
+        title,
+        channel: 'push'
+      }, 'Creating push notification job');
 
       const job = await notificationQueue.add(
         'push-notification',
@@ -152,22 +141,12 @@ export const notificationQueueHelpers = {
     message: string
   ): Promise<string> {
     try {
-      // For development/demo, simply generate a job ID
-      if (process.env.NODE_ENV === 'development') {
-        const mockJobId = `mock-notification-sms-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-        
-        // Log the mock job for visibility in development
-        logger.info({
-          jobId: mockJobId,
-          userId,
-          phoneNumber,
-          message: message.substring(0, 20) + (message.length > 20 ? '...' : ''),
-          channel: 'sms',
-          jobType: 'sms-notification'
-        }, 'Created mock SMS notification job');
-        
-        return mockJobId;
-      }
+      logger.info({
+        userId,
+        phoneNumber: phoneNumber.replace(/\d(?=\d{4})/g, '*'),
+        messagePreview: message.substring(0, 20) + (message.length > 20 ? '...' : ''),
+        channel: 'sms'
+      }, 'Creating SMS notification job');
 
       const job = await notificationQueue.add(
         'sms-notification',
@@ -203,22 +182,12 @@ export const notificationQueueHelpers = {
     type: 'info' | 'warning' | 'error' | 'success'
   ): Promise<string> {
     try {
-      // For development/demo, simply generate a job ID
-      if (process.env.NODE_ENV === 'development') {
-        const mockJobId = `mock-notification-inapp-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-        
-        // Log the mock job for visibility in development
-        logger.info({
-          jobId: mockJobId,
-          userId,
-          message: message.substring(0, 20) + (message.length > 20 ? '...' : ''),
-          type,
-          channel: 'in-app',
-          jobType: 'in-app-notification'
-        }, 'Created mock in-app notification job');
-        
-        return mockJobId;
-      }
+      logger.info({
+        userId,
+        messagePreview: message.substring(0, 20) + (message.length > 20 ? '...' : ''),
+        type,
+        channel: 'in-app'
+      }, 'Creating in-app notification job');
 
       const job = await notificationQueue.add(
         'in-app-notification',

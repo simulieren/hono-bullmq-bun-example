@@ -46,22 +46,10 @@ export const jobService = {
       // Map priority to numeric values
       const priorityValue = priority === 'high' ? 1 : priority === 'medium' ? 2 : 3;
       
-      logger.info({ priority }, 'Creating processing job');
-      
-      // For development/demo environment, create a mock job
-      if (process.env.NODE_ENV === 'development') {
-        const mockJobId = `mock-processing-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-        
-        // Log the mock job for visibility in development
-        logger.info({
-          jobId: mockJobId,
-          priority,
-          data: JSON.stringify(data.data).substring(0, 50) + (JSON.stringify(data.data).length > 50 ? '...' : ''),
-          jobType: 'processing'
-        }, 'Created mock processing job');
-        
-        return { id: mockJobId };
-      }
+      logger.info({ 
+        priority,
+        dataPreview: JSON.stringify(data.data).substring(0, 50) + (JSON.stringify(data.data).length > 50 ? '...' : '')
+      }, 'Creating processing job');
       
       const job = await processingQueue.add('process-data', data.data, {
         priority: priorityValue,
@@ -87,23 +75,11 @@ export const jobService = {
    */
   async createNotificationJob(data: { userId: string; message: string; channel: 'push' | 'sms' | 'in-app' }) {
     try {
-      logger.info({ userId: data.userId, channel: data.channel }, 'Creating notification job');
-      
-      // For development/demo environment, create a mock job
-      if (process.env.NODE_ENV === 'development') {
-        const mockJobId = `mock-notification-general-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-        
-        // Log the mock job for visibility in development
-        logger.info({
-          jobId: mockJobId,
-          userId: data.userId,
-          message: data.message.substring(0, 20) + (data.message.length > 20 ? '...' : ''),
-          channel: data.channel,
-          jobType: 'notification-general'
-        }, 'Created mock notification job');
-        
-        return { id: mockJobId };
-      }
+      logger.info({ 
+        userId: data.userId, 
+        channel: data.channel,
+        messagePreview: data.message.substring(0, 20) + (data.message.length > 20 ? '...' : '')
+      }, 'Creating notification job');
       
       const job = await notificationQueue.add('send-notification', data, {
         attempts: 5,
@@ -249,23 +225,7 @@ export const jobService = {
    */
   async cancelJob(id: string) {
     try {
-      // For development mode, handle mock cancellation for mock jobs
-      if (process.env.NODE_ENV === 'development' && id.startsWith('mock-')) {
-        // Parse job type from ID for better logging
-        let queueType = 'unknown';
-        if (id.includes('email')) {
-          queueType = 'email';
-        } else if (id.includes('notification')) {
-          queueType = 'notification';
-        } else if (id.includes('processing')) {
-          queueType = 'processing';
-        }
-        
-        logger.info({ jobId: id, queue: queueType }, `Mock job ${id} cancelled successfully`);
-        return true;
-      }
-      
-      // For production, use the real implementation
+      // Use real implementation with Redis
       // Parse job ID to get queue name and job ID
       const [queueName, jobId] = id.includes(':') ? id.split(':') : [null, id];
       
@@ -311,35 +271,7 @@ export const jobService = {
    */
   async getJobLogs(id: string) {
     try {
-      // For development mode, handle mock logs for mock jobs
-      if (process.env.NODE_ENV === 'development' && id.startsWith('mock-')) {
-        // Parse job type from ID
-        let queueType = 'unknown';
-        if (id.includes('email')) {
-          queueType = 'email';
-        } else if (id.includes('notification')) {
-          queueType = 'notification';
-        } else if (id.includes('processing')) {
-          queueType = 'processing';
-        }
-        
-        const now = new Date();
-        const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
-        const twoMinutesAgo = new Date(now.getTime() - 2 * 60 * 1000);
-        
-        // Create mock logs based on queue type
-        return {
-          jobId: id,
-          queue: queueType,
-          logs: [
-            { timestamp: fiveMinutesAgo.toISOString(), message: `Received job ${id}` },
-            { timestamp: twoMinutesAgo.toISOString(), message: `Processing job ${id}` },
-            { timestamp: now.toISOString(), message: `Job ${id} completed successfully` }
-          ]
-        };
-      }
-      
-      // For production, use the real implementation
+      // Get real job logs from Redis
       const job = await this.getJobById(id);
       
       // In a real implementation, you would retrieve logs from a storage system
