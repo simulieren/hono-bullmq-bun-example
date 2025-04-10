@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { jobRoutes } from './job.routes';
 import { healthRoutes } from './health.routes';
+import { dashboardRoutes } from './dashboard.routes';
 
 /**
  * Registers all application routes
@@ -28,6 +29,9 @@ export function registerRoutes(app: Hono): void {
 
   // Mount the API router to the main app
   app.route('/', api);
+
+  // Mount the Bull Board dashboard
+  app.route('/dashboard', dashboardRoutes);
 
   // Root redirect to API health check
   app.get('/', (c) => c.redirect('/api/v1/health'));
