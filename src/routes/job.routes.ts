@@ -186,14 +186,25 @@ jobRoutes.get('/:id/logs', async (c) => {
   });
 });
 
-// Route: GET /api/v1/jobs/stats
+// Route: GET /stats
 // Get stats for all job queues
 jobRoutes.get('/stats', async (c) => {
-  // Get real-time stats from Redis
-  const stats = await jobService.getQueueStats();
-  
-  return c.json({
-    success: true,
-    data: stats
-  });
+  try {
+    // Get real-time stats from Redis
+    const stats = await jobService.getQueueStats();
+    
+    return c.json({
+      success: true,
+      data: stats
+    });
+  } catch (error) {
+    console.error('Error getting queue stats:', error);
+    return c.json({
+      success: false,
+      error: {
+        message: error instanceof Error ? error.message : 'Failed to retrieve stats',
+        code: 500
+      }
+    }, 500);
+  }
 });
