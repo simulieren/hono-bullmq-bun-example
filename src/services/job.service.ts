@@ -249,6 +249,23 @@ export const jobService = {
    */
   async cancelJob(id: string) {
     try {
+      // For development mode, handle mock cancellation for mock jobs
+      if (process.env.NODE_ENV === 'development' && id.startsWith('mock-')) {
+        // Parse job type from ID for better logging
+        let queueType = 'unknown';
+        if (id.includes('email')) {
+          queueType = 'email';
+        } else if (id.includes('notification')) {
+          queueType = 'notification';
+        } else if (id.includes('processing')) {
+          queueType = 'processing';
+        }
+        
+        logger.info({ jobId: id, queue: queueType }, `Mock job ${id} cancelled successfully`);
+        return true;
+      }
+      
+      // For production, use the real implementation
       // Parse job ID to get queue name and job ID
       const [queueName, jobId] = id.includes(':') ? id.split(':') : [null, id];
       
@@ -294,6 +311,35 @@ export const jobService = {
    */
   async getJobLogs(id: string) {
     try {
+      // For development mode, handle mock logs for mock jobs
+      if (process.env.NODE_ENV === 'development' && id.startsWith('mock-')) {
+        // Parse job type from ID
+        let queueType = 'unknown';
+        if (id.includes('email')) {
+          queueType = 'email';
+        } else if (id.includes('notification')) {
+          queueType = 'notification';
+        } else if (id.includes('processing')) {
+          queueType = 'processing';
+        }
+        
+        const now = new Date();
+        const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
+        const twoMinutesAgo = new Date(now.getTime() - 2 * 60 * 1000);
+        
+        // Create mock logs based on queue type
+        return {
+          jobId: id,
+          queue: queueType,
+          logs: [
+            { timestamp: fiveMinutesAgo.toISOString(), message: `Received job ${id}` },
+            { timestamp: twoMinutesAgo.toISOString(), message: `Processing job ${id}` },
+            { timestamp: now.toISOString(), message: `Job ${id} completed successfully` }
+          ]
+        };
+      }
+      
+      // For production, use the real implementation
       const job = await this.getJobById(id);
       
       // In a real implementation, you would retrieve logs from a storage system
