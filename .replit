@@ -2,6 +2,7 @@ modules = ["bun"]
 
 [nix]
 channel = "stable-24_05"
+packages = ["jq"]
 
 [workflows]
 runButton = "Project"

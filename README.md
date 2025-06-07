@@ -14,32 +14,61 @@ A production-ready Hono server with Bun runtime, featuring Redis and BullMQ for 
 - **Error Handling**: Comprehensive error handling and reporting
 - **Development Mode**: Mock implementations for development without Redis
 
-## Installation
-
-To install dependencies:
+## Quick Start
 
 ```bash
+# Install dependencies
 bun install
+
+# Setup environment
+cp .env.example .env
+# Edit .env with your Redis configuration
+
+# Start development server
+./run dev
+# or
+make dev
 ```
+
+## Available Commands
+
+### npm-style Commands
+
+```bash
+./run dev        # Start development server with hot reload
+./run build      # Build for production
+./run start      # Start production server
+./run test       # Run tests
+./run clean      # Clean build artifacts
+./run health     # Check server health
+./run stats      # Show queue statistics
+```
+
+### Alternative with Make
+
+```bash
+make dev         # Start development server
+make build       # Build for production
+make start       # Start production server
+make test        # Run tests
+make clean       # Clean workspace
+make dashboard   # Open dashboard
+make test-jobs   # Create sample jobs
+```
+
+See [COMMANDS.md](./COMMANDS.md) for complete command reference.
 
 ## Configuration
 
-1. Create a `.env` file in the project root (use `.env.example` as a template)
-2. Configure Redis connection settings and other environment variables
+1. Copy environment template: `cp .env.example .env`
+2. Update Redis connection settings:
 
-```
+```env
 NODE_ENV=development
 PORT=5000
-REDIS_URL=redis://localhost:6379
-REDIS_PREFIX=queue:
-```
-
-## Running the Server
-
-Start the development server:
-
-```bash
-bun run src/index.ts
+REDIS_HOST=switchyard.proxy.rlwy.net
+REDIS_PORT=43172
+REDIS_PASSWORD=your_password
 ```
 
 ## API Endpoints

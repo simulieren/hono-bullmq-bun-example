@@ -1,0 +1,59 @@
+#!/bin/bash
+# Simple npm-style runner for Hono Job Queue Server
+
+case "$1" in
+  "dev")
+    echo "Starting development server..."
+    bun run --watch src/index.ts
+    ;;
+  "build")
+    echo "Building application..."
+    mkdir -p dist
+    bun build src/index.ts --outdir dist --target bun --minify
+    echo "✓ Build completed: dist/index.js"
+    ;;
+  "start")
+    echo "Starting production server..."
+    if [ ! -f "dist/index.js" ]; then
+      echo "❌ Build not found. Run: ./run build"
+      exit 1
+    fi
+    cd dist && bun run index.js
+    ;;
+  "test")
+    echo "Running tests..."
+    bun test
+    ;;
+  "install")
+    echo "Installing dependencies..."
+    bun install
+    ;;
+  "clean")
+    echo "Cleaning build artifacts..."
+    rm -rf dist node_modules/.cache .bun-cache
+    echo "✓ Clean completed"
+    ;;
+  "health")
+    curl -s http://localhost:5000/api/v1/health | jq '.' 2>/dev/null || echo "Server not running or jq not available"
+    ;;
+  "stats")
+    curl -s http://localhost:5000/api/v1/stats | jq '.' 2>/dev/null || echo "Server not running or jq not available"
+    ;;
+  "dashboard")
+    echo "Dashboard: http://localhost:5000/dashboard"
+    ;;
+  *)
+    echo "Usage: ./run [command]"
+    echo ""
+    echo "Commands:"
+    echo "  dev        Start development server with hot reload"
+    echo "  build      Build for production"
+    echo "  start      Start production server"
+    echo "  test       Run tests"
+    echo "  install    Install dependencies"
+    echo "  clean      Clean build artifacts"
+    echo "  health     Check server health"
+    echo "  stats      Show queue statistics"
+    echo "  dashboard  Show dashboard URL"
+    ;;
+esac
