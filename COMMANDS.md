@@ -1,50 +1,47 @@
 # Development Commands
 
-This project provides npm-style commands through multiple interfaces for your convenience.
+This project provides npm-style commands for development and production workflows.
 
 ## Quick Start
 
 ```bash
 # Install dependencies
+npm install
+# or
 bun install
 
 # Start development server
-./run dev
-# or
-make dev
+npm run dev
 
 # Build for production
-./run build
-# or
-make build
+npm run build
 
 # Start production server
-./run start
-# or
-make start
+npm run start
 ```
 
 ## Available Commands
 
 ### Core Development
 
-| Command | Script | Makefile | Description |
-|---------|--------|----------|-------------|
-| `./run dev` | `make dev` | `bun run --watch src/index.ts` | Start development server with hot reload |
-| `./run build` | `make build` | `bun build src/index.ts --outdir dist --target bun --minify` | Build optimized production bundle |
-| `./run start` | `make start` | `cd dist && bun run index.js` | Start production server |
-| `./run test` | `make test` | `bun test` | Run test suite |
-| `./run install` | `make install` | `bun install` | Install dependencies |
-| `./run clean` | `make clean` | Remove build artifacts and cache | Clean workspace |
+| Command | Description | Implementation |
+|---------|-------------|----------------|
+| `npm run dev` | Start development server with hot reload | `bun run --watch src/index.ts` |
+| `npm run build` | Build optimized production bundle | `bun build src/index.ts --outdir dist --target bun --minify` |
+| `npm run start` | Start production server | `cd dist && bun run index.js` |
+| `npm run test` | Run test suite | `bun test` |
+| `npm install` | Install dependencies | `bun install` |
+| `npm run clean` | Clean workspace | Remove build artifacts and cache |
 
 ### Monitoring & Testing
 
 | Command | Description |
 |---------|-------------|
-| `./run health` | Check server health status |
-| `./run stats` | Display queue statistics |
-| `./run dashboard` | Show dashboard URL |
-| `make test-jobs` | Create sample test jobs |
+| `npm run health` | Check server health status |
+| `npm run stats` | Display queue statistics |
+| `npm run dashboard` | Open dashboard in browser |
+| `npm run test-jobs` | Create sample test jobs |
+| `npm run help` | Show all available commands |
 
 ### API Testing Commands
 
@@ -80,19 +77,16 @@ curl http://localhost:5000/api/v1/jobs/1
 curl http://localhost:5000/api/v1/jobs/1/logs
 ```
 
-## npm-style Usage
+## Alternative Usage with Bun
 
-If you prefer npm-style commands, you can create aliases:
+Since this project uses Bun, you can also run commands directly with Bun:
 
 ```bash
-# Add to your ~/.bashrc or ~/.zshrc
-alias npm="./run"
-
-# Then use:
-npm run dev
-npm run build
-npm run start
-npm run test
+# Use bun instead of npm
+bun run dev
+bun run build
+bun run start
+bun test
 ```
 
 ## Environment Setup
@@ -106,7 +100,7 @@ npm run test
 
 3. Start development:
    ```bash
-   ./run dev
+   npm run dev
    ```
 
 4. Open dashboard: http://localhost:5000/dashboard
@@ -115,19 +109,19 @@ npm run test
 
 ```bash
 # Build production bundle
-./run build
+npm run build
 
 # Set production environment
 cp .env.example .env.production
 # Edit .env.production with production values
 
 # Start production server
-NODE_ENV=production ./run start
+NODE_ENV=production npm run start
 ```
 
 ## Troubleshooting
 
 - **Port 5000 in use**: Change PORT in .env file
 - **Redis connection failed**: Update REDIS_* variables in .env
-- **Build fails**: Run `./run clean` then `./run build`
-- **Missing dependencies**: Run `./run install`
+- **Build fails**: Run `npm run clean` then `npm run build`
+- **Missing dependencies**: Run `npm install`

@@ -18,6 +18,8 @@ A production-ready Hono server with Bun runtime, featuring Redis and BullMQ for 
 
 ```bash
 # Install dependencies
+npm install
+# or
 bun install
 
 # Setup environment
@@ -25,35 +27,36 @@ cp .env.example .env
 # Edit .env with your Redis configuration
 
 # Start development server
-./run dev
-# or
-make dev
+npm run dev
 ```
 
 ## Available Commands
 
-### npm-style Commands
+### npm Scripts
 
 ```bash
-./run dev        # Start development server with hot reload
-./run build      # Build for production
-./run start      # Start production server
-./run test       # Run tests
-./run clean      # Clean build artifacts
-./run health     # Check server health
-./run stats      # Show queue statistics
+npm run dev        # Start development server with hot reload
+npm run build      # Build for production
+npm run start      # Start production server
+npm run test       # Run tests
+npm run clean      # Clean build artifacts
+npm run health     # Check server health
+npm run stats      # Show queue statistics
+npm run dashboard  # Open dashboard in browser
+npm run test-jobs  # Create sample test jobs
+npm run help       # Show all available commands
 ```
 
-### Alternative with Make
+### Alternative with Bun
 
 ```bash
-make dev         # Start development server
-make build       # Build for production
-make start       # Start production server
-make test        # Run tests
-make clean       # Clean workspace
-make dashboard   # Open dashboard
-make test-jobs   # Create sample jobs
+bun run dev        # Start development server
+bun run build      # Build for production
+bun run start      # Start production server
+bun test           # Run tests
+bun run clean      # Clean workspace
+bun run dashboard  # Open dashboard
+bun run test-jobs  # Create sample jobs
 ```
 
 See [COMMANDS.md](./COMMANDS.md) for complete command reference.
